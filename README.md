@@ -1,21 +1,22 @@
-# MMA Data Collection API
+# MMA Data Collection Application
 
-A Flask API for collecting and managing MMA fight data, including fighters, events, and fights.
+A Flask application for scraping and storing MMA fight data from UFCStats.com.
 
-## Requirements
+## Features
 
-- Python 3.9+
-- PostgreSQL database
+- Scrape fighter profiles, event details, fight results, and round-by-round stats
+- Store data in a PostgreSQL database using SQLAlchemy models
+- Browse and manage data via Flask-Admin interface
 
-## Installation
+## Setup
 
 1. Clone the repository:
 ```bash
 git clone <repository-url>
-cd mma-data-api
+cd mma-data-collection
 ```
 
-2. Create a virtual environment and activate it:
+2. Set up a virtual environment:
 ```bash
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
@@ -26,77 +27,56 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. Create a `.env` file based on `.env.example` and update with your PostgreSQL credentials:
+4. Configure your environment:
 ```bash
 cp .env.example .env
-# Edit .env with your actual database credentials
+# Edit .env with your database credentials
 ```
 
-## Database Setup
-
-1. Create a PostgreSQL database:
-```sql
-CREATE DATABASE my_db_name;
-CREATE USER my_db_user WITH PASSWORD 'my_db_password';
-GRANT ALL PRIVILEGES ON DATABASE my_db_name TO my_db_user;
-```
-
-2. Update the `.env` file with your PostgreSQL connection details.
-
-## Running the Application
-
-Start the Flask development server:
+5. Initialize the database:
 ```bash
-python run.py
+flask init-db
 ```
 
-The API will be available at http://localhost:5000/
+## Usage
 
-## API Endpoints
+### Starting the application
 
-### Fighters
-
-- `GET /api/fighters` - Get all fighters
-- `GET /api/fighters/<id>` - Get a specific fighter
-- `POST /api/fighters` - Create a new fighter
-- `PUT /api/fighters/<id>` - Update a fighter
-- `DELETE /api/fighters/<id>` - Delete a fighter
-
-### Events
-
-- `GET /api/events` - Get all events
-- `GET /api/events/<id>` - Get a specific event
-- `POST /api/events` - Create a new event
-- `PUT /api/events/<id>` - Update an event
-- `DELETE /api/events/<id>` - Delete an event
-
-### Fights
-
-- `GET /api/fights` - Get all fights
-- `GET /api/fights/<id>` - Get a specific fight
-- `POST /api/fights` - Create a new fight
-- `PUT /api/fights/<id>` - Update a fight
-- `DELETE /api/fights/<id>` - Delete a fight
-
-## Example Requests
-
-### Create a fighter
 ```bash
-curl -X POST http://localhost:5000/api/fighters \
-  -H "Content-Type: application/json" \
-  -d '{"first_name": "Jon", "last_name": "Jones", "nickname": "Bones", "height": 193.04, "reach": 215.9}'
+flask run
 ```
 
-### Create an event
+The web interface will be available at http://localhost:5000
+
+### Scraping data
+
+To scrape data from an event:
+
 ```bash
-curl -X POST http://localhost:5000/api/events \
-  -H "Content-Type: application/json" \
-  -d '{"event_name": "UFC 285", "event_date": "2023-03-04", "location": "Las Vegas, Nevada"}'
+flask scrape --start-url http://ufcstats.com/event-details/f3743d8ef5dde970
 ```
 
-### Create a fight
-```bash
-curl -X POST http://localhost:5000/api/fights \
-  -H "Content-Type: application/json" \
-  -d '{"event_id": 1, "fighter1_id": 1, "fighter2_id": 2, "weight_class": "Heavyweight", "scheduled_rounds": 5}'
-``` 
+You can replace the URL with any UFC event page.
+
+### Example URLs for Testing
+
+- Event: `http://ufcstats.com/event-details/f3743d8ef5dde970` (UFC 303)
+- Fight Details: `http://ufcstats.com/fight-details/fc8ad0c7fc70dde7` (Dan Ige vs Diego Lopes)
+- Fighter: `http://ufcstats.com/fighter-details/f166e93d04a8c274` (Diego Lopes)
+
+## Database Schema
+
+The application uses four main models:
+
+1. **Fighter**: Stores fighter biographical data and career statistics
+2. **Event**: Stores event information like name, date, and location
+3. **Fight**: Stores fight details and total fight statistics
+4. **FightRoundStats**: Stores detailed round-by-round statistics for each fighter
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License. 
